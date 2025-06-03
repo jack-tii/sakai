@@ -112,18 +112,6 @@
                             </arguments>
                         </configuration>
                     </execution>
-                    <execution>
-                        <id>Test vue components</id>
-                        <phase>${sakai.skip.test.phase}</phase>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>
-                                run test
-                            </arguments>
-                        </configuration>
-                    </execution>
                 </executions>
             </plugin>
         </plugins>

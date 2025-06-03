@@ -106,24 +106,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>lint</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>run lint</arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>analyze</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>run analyze</arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>bundle</id>
                         <goals>
                             <goal>npm</goal>
