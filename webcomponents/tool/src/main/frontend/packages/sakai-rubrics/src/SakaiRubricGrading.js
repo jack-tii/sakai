@@ -301,6 +301,8 @@ export class SakaiRubricGrading extends rubricsApiMixin(RubricsElement) {
     });
 
     this.updateTotalPoints(false);
+
+    this.querySelectorAll("sakai-rubric-grading-comment").forEach(gc => gc.requestUpdate());
   }
 
   fineTuneRating(e) {
@@ -368,7 +370,6 @@ export class SakaiRubricGrading extends rubricsApiMixin(RubricsElement) {
     if (this._evaluation?.id) url += `/${this._evaluation.id}`;
     fetch(url, {
       body: JSON.stringify(evaluation),
-      credentials: "include",
       headers: { "Content-Type": "application/json" },
       method: this._evaluation?.id ? "PUT" : "POST",
     })
@@ -382,7 +383,7 @@ export class SakaiRubricGrading extends rubricsApiMixin(RubricsElement) {
     })
     .then(data => {
 
-      this.dispatchEvent(new CustomEvent("rubric-ratings-changed", { bubbles: true, composed: true }));
+      this.dispatchEvent(new CustomEvent("rubric-ratings-changed", { bubbles: true }));
       this._evaluation = data;
       return Promise.resolve(this._evaluation);
     })
