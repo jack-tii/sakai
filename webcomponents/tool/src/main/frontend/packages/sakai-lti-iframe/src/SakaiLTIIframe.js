@@ -8,6 +8,7 @@ export class SakaiLTIIframe extends SakaiElement {
     allowResize: { attribute: "allow-resize", type: String },
     newWindowText: { attribute: "new-window-text", type: String },
     launchUrl: { attribute: "launch-url", type: String },
+    allowLocalNetworkAccess: { attribute: "allow-local-network-access", type: String },
   };
 
   constructor() {
@@ -112,6 +113,8 @@ export class SakaiLTIIframe extends SakaiElement {
 
   render() {
 
+    const localNetworkAccessProperty = this.allowLocalNetworkAccess ? "local-network-access" : "";
+
     return html`
       <div class="sakai-iframe-launch-button" id="sakai-lti-button-${this.randomId}" style="display:none;">
         <p>
@@ -129,7 +132,7 @@ export class SakaiLTIIframe extends SakaiElement {
             data-allow-resize="${this.allowResize}"
             marginheight="0"
             scrolling="auto"
-            allow="camera; fullscreen; microphone">
+            allow="camera; fullscreen; microphone; ${localNetworkAccessProperty}">
         </iframe>
       </div>
     `;

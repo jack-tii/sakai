@@ -132,6 +132,10 @@ public interface LTIService extends LTISubstitutionsFilter {
             "allowlineitems:checkbox:label=bl_allowlineitems:archive=true",
             "allowroster:checkbox:label=bl_allowroster:archive=true",
 
+            // SAK-52276 - Chrome local network access
+            "browsersettings:header:fields=allowlocalnetworkaccess",
+            "allowlocalnetworkaccess:checkbox:label=bl_allowlocalnetworkaccess:archive=true",
+
             "debug:radio:label=bl_debug:choices=off,on,content",
             "siteinfoconfig:radio:label=bl_siteinfoconfig:advanced:choices=bypass,config",
             "splash:textarea:label=bl_splash:rows=5:cols=25:maxlength=16384",
@@ -213,6 +217,7 @@ public interface LTIService extends LTISubstitutionsFilter {
     String LTI_ALLOWOUTCOMES = "allowoutcomes";
     String LTI_ALLOWLINEITEMS = "allowlineitems";
     String LTI_ALLOWROSTER = "allowroster";
+    String LTI_ALLOWLOCALNETWORKACCESS = "allowlocalnetworkaccess";
     String LTI_SETTINGS = "settings";
     // This field is mis-named - so we make an alias :(
     String LTI_CONTENTITEM = "contentitem";

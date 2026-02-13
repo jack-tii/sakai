@@ -153,7 +153,8 @@ export const graderRenderingMixin = Base => class extends Base {
           <sakai-lti-iframe
             allow-resize="yes"
             new-window-text="${this._i18n.lti_grade_launch_button}"
-            launch-url="${this.ltiGradableLaunch}">
+            launch-url="${this.ltiGradableLaunch}"
+            allow-local-network-access=true>
           </sakai-lti-iframe>
         ` : nothing }
         ${this._submission.ltiSubmissionLaunch ? nothing : html`

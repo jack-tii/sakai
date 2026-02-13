@@ -80,6 +80,9 @@ public class LtiToolBean extends LTIBaseBean {
     public Boolean allowoutcomes;      // TOOL_MODEL: "allowoutcomes:checkbox:label=bl_allowoutcomes:archive=true"
     public Boolean allowlineitems;     // TOOL_MODEL: "allowlineitems:checkbox:label=bl_allowlineitems:archive=true"
     public Boolean allowroster;        // TOOL_MODEL: "allowroster:checkbox:label=bl_allowroster:archive=true"
+
+    // Browser settings from TOOL_MODEL
+    public Boolean allowlocalnetworkaccess; // "allowlocalnetworkaccess:checkbox:label=bl_allowlocalnetworkaccess:archive=true",
     
     // Configuration fields from TOOL_MODEL
     public Integer debug;              // TOOL_MODEL: "debug:radio:label=bl_debug:choices=off,on,content"
@@ -167,6 +170,9 @@ public class LtiToolBean extends LTIBaseBean {
         tool.setAllowoutcomes(getBooleanValue(map, LTIService.LTI_ALLOWOUTCOMES));
         tool.setAllowlineitems(getBooleanValue(map, LTIService.LTI_ALLOWLINEITEMS));
         tool.setAllowroster(getBooleanValue(map, LTIService.LTI_ALLOWROSTER));
+
+        // Browser Settings
+        tool.setAllowlocalnetworkaccess(getBooleanValue(map, LTIService.LTI_ALLOWLOCALNETWORKACCESS));
         
         // Configuration
         tool.setDebug(getThreeStateValue(map, LTIService.LTI_DEBUG, "debug"));
@@ -252,6 +258,9 @@ public class LtiToolBean extends LTIBaseBean {
         putBooleanAsInteger(map, LTIService.LTI_ALLOWOUTCOMES, allowoutcomes);
         putBooleanAsInteger(map, LTIService.LTI_ALLOWLINEITEMS, allowlineitems);
         putBooleanAsInteger(map, LTIService.LTI_ALLOWROSTER, allowroster);
+
+        // Browser Settings
+        putBooleanAsInteger(map, LTIService.LTI_ALLOWLOCALNETWORKACCESS, allowlocalnetworkaccess);
         
         // Configuration
         putThreeStateIfNotNull(map, LTIService.LTI_DEBUG, debug, "debug");
