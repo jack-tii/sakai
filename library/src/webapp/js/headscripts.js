@@ -226,7 +226,7 @@ function setMainFrameHeightWithMax(id, maxHeight)
 		    clearTimeout(MainFrameHeightTimeOut);
 		    MainFrameHeightTimeOut = false;
 	    }
-	    MainFrameHeightTimeOut = setTimeout( function() { setMainFrameHeightNow(id, maxHeight); }, 10000);
+	    MainFrameHeightTimeOut = setTimeout( function() { setMainFrameHeightNow(id, maxHeight); }, 1000);
     }
 }
 
