@@ -8,7 +8,14 @@ parent.location = "$returnUrl";
 #if ( $forwardUrl ) 
 <script type="text/javascript">
 // The CKEDITOR has a bit of code that collapses our enclosing frame down in Chrome SAK-45044 - so we put it back up right before we redirect
-try { window.frameElement.style.height= '450px'; } catch(e) { };
+try {
+  console.log('window.frameElement.name is ' + window.frameElement.name);
+  if (window.frameElement.name == 'sakai-lti-admin-iframe') {
+    console.log('Supressed setting the height');
+  } else {
+    window.frameElement.style.height= '450px';
+  }
+} catch(e) { };
 #if ( $forceLight )
 try { if (window.frameElement) window.frameElement.classList.add('sakai-iframe-force-light'); } catch(e) { };
 #else
