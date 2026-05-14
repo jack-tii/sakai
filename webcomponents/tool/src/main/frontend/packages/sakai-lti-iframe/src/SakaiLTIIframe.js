@@ -124,7 +124,7 @@ export class SakaiLTIIframe extends SakaiElement {
 
   get _heightStyle() {
     const normalized = this._normalizeHeightForCss(this.height);
-    return normalized || "1200px";
+    return normalized || "800px";
   }
 
   launchPopup() {
