@@ -149,6 +149,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
 
+import static org.sakaiproject.microsoft.impl.MicrosoftConfigurationServiceImpl.decrypt;
+
 @Slf4j
 @Transactional
 public class MicrosoftCommonServiceImpl implements MicrosoftCommonService {
@@ -215,11 +217,17 @@ public class MicrosoftCommonServiceImpl implements MicrosoftCommonService {
 					log.debug(MicrosoftCredentials.KEY_SCOPE+"="+microsoftCredentials.getScope());
 					log.debug(MicrosoftCredentials.KEY_AUTHORITY+"="+microsoftCredentials.getAuthority());
 
+					String decryptedSecret = decrypt(microsoftCredentials.getSecret());
+					if (decryptedSecret == null) {
+						log.error("Failed to decrypt Microsoft secret. Check your microsoft.encryption.key.");
+						throw new MicrosoftInvalidCredentialsException();
+					}
+
 					TokenCredential credential = new ClientSecretCredentialBuilder()
 							.authorityHost(microsoftCredentials.getAuthority())
 							.tenantId(microsoftCredentials.getTenantId())
 							.clientId(microsoftCredentials.getClientId())
-							.clientSecret(microsoftCredentials.getSecret())
+							.clientSecret(decryptedSecret)
 							.build();
 					this.graphClient = new GraphServiceClient(credential, microsoftCredentials.getScope());
 
@@ -2650,12 +2658,11 @@ public class MicrosoftCommonServiceImpl implements MicrosoftCommonService {
 		List<MicrosoftDriveItem> ret = new ArrayList<>();
 		try {
 			GraphServiceClient client = getGraphClient();
-			Drive drive = client.me().drive().get();
-			String driveId = drive.getId();
+			String driveId = client.groups().byGroupId(groupId).drive().get().getId();
 			
 			DriveItemCollectionResponse itemPage = null;
 			if(itemId != null) {
-				itemPage = client.drives().byDriveId(client.me().drive().get().getId()).items().byDriveItemId(itemId).children().get();
+				itemPage = client.drives().byDriveId(driveId).items().byDriveItemId(itemId).children().get();
 			} else {
 				itemPage = client.drives().byDriveId(driveId).items().byDriveItemId("root").children().get();
 			}
@@ -2978,12 +2985,11 @@ public class MicrosoftCommonServiceImpl implements MicrosoftCommonService {
 		List<MicrosoftDriveItem> ret = new ArrayList<>();
 		try {
 			GraphServiceClient client = (GraphServiceClient)microsoftAuthorizationService.getDelegatedGraphClient(userId);
-			Drive drive = client.me().drive().get();
-			String driveId = drive.getId();
+			String driveId = client.me().drive().get().getId();
 			
 			DriveItemCollectionResponse itemPage = null;
 			if(itemId != null) {
-				itemPage = client.drives().byDriveId(client.me().drive().get().getId()).items().byDriveItemId(itemId).children().get();
+				itemPage = client.drives().byDriveId(driveId).items().byDriveItemId(itemId).children().get();
 			} else {
 				itemPage = client.drives().byDriveId(driveId).items().byDriveItemId("root").children().get();
 			}

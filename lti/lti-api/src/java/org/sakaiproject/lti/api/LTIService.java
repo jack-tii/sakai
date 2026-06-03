@@ -105,7 +105,6 @@ public interface LTIService extends LTISubstitutionsFilter {
             "description:textarea:label=bl_description:maxlength=4096:archive=true",
             "status:radio:label=bl_status:choices=enable,disable",
             "visible:radio:label=bl_visible:choices=visible,stealth:role=admin",
-            "deployment_id:integer:hidden=true:archive=true",
             "launch:url:label=bl_launch:maxlength=1024:required=true:archive=true",
             "newpage:radio:label=bl_newpage:choices=off,on,content:archive=true",
             "frameheight:integer:label=bl_frameheight:archive=true",
@@ -127,9 +126,10 @@ public interface LTIService extends LTISubstitutionsFilter {
             "sendname:checkbox:label=bl_sendname:archive=true",
             "sendemailaddr:checkbox:label=bl_sendemailaddr:archive=true",
             "pl_privacy:checkbox:label=bl_pl_privacy:role=admin",
-            "services:header:fields=allowoutcomes,allowlineitems,allowroster",
+            "services:header:fields=allowoutcomes,allowlineitems,allowgradebookreadonly,allowroster",
             "allowoutcomes:checkbox:label=bl_allowoutcomes:archive=true",
             "allowlineitems:checkbox:label=bl_allowlineitems:archive=true",
+            "allowgradebookreadonly:checkbox:label=bl_allowgradebookreadonly:archive=true",
             "allowroster:checkbox:label=bl_allowroster:archive=true",
 
             "debug:radio:label=bl_debug:choices=off,on,content",
@@ -142,8 +142,9 @@ public interface LTIService extends LTISubstitutionsFilter {
             "lti13:radio:label=bl_lti13:choices=off,on,both:role=admin:archive=true",
 
             // LTI 1.3 security values from the tool
-            "lti13_tool_security:header:fields=lti13_tool_keyset,lti13_oidc_endpoint,lti13_oidc_redirect",
+            "lti13_tool_security:header:fields=lti13_tool_keyset,deployment_id,lti13_oidc_endpoint,lti13_oidc_redirect",
             "lti13_tool_keyset:text:label=bl_lti13_tool_keyset:maxlength=1024:role=admin",  // From the tool - keep legacy field name
+            "deployment_id:text:label=bl_deployment_id:maxlength=255:role=admin:archive=true",
             "lti13_oidc_endpoint:text:label=bl_lti13_oidc_endpoint:maxlength=1024:role=admin",  // From the tool - keep legacy field name
             "lti13_oidc_redirect:text:label=bl_lti13_oidc_redirect:maxlength=1024:role=admin",  // From the tool - keep legacy field name
 
@@ -151,7 +152,6 @@ public interface LTIService extends LTISubstitutionsFilter {
             "lti13_lms_security:header:fields=lti13_lms_issuer,lti13_client_id,lti13_lms_keyset,lti13_lms_endpoint,lti13_lms_token",
             "lti13_lms_issuer:text:label=bl_lti13_lms_issuer:readonly=true:persist=false:maxlength=1024:role=admin",
             "lti13_client_id:text:label=bl_lti13_client_id:readonly=true:maxlength=1024:role=admin",
-            "lti13_lms_deployment_id:text:label=bl_lti13_lms_deployment_id:readonly=true:maxlength=1024:role=admin",
             "lti13_lms_keyset:text:label=bl_lti13_lms_keyset:readonly=true:persist=false:maxlength=1024:role=admin",
             "lti13_lms_endpoint:text:label=bl_lti13_lms_endpoint:readonly=true:persist=false:maxlength=1024:role=admin",
             "lti13_lms_token:text:label=bl_lti13_lms_token:readonly=true:persist=false:maxlength=1024:role=admin",
@@ -175,6 +175,7 @@ public interface LTIService extends LTISubstitutionsFilter {
             "tool_id:integer:hidden=true",
             "SITE_ID:text:label=bl_tool_site_SITE_ID:required=true:maxlength=99:role=admin",
             "notes:text:label=bl_tool_site_notes:maxlength=1024",
+            "deployment_group:text:label=bl_deployment_group:maxlength=128:alphanumeric=true:truncate=false",
             "created_at:autodate",
             "updated_at:autodate",
     };
@@ -212,6 +213,7 @@ public interface LTIService extends LTISubstitutionsFilter {
     String LTI_SENDEMAILADDR = "sendemailaddr";
     String LTI_ALLOWOUTCOMES = "allowoutcomes";
     String LTI_ALLOWLINEITEMS = "allowlineitems";
+    String LTI_ALLOWGRADEBOOKREADONLY = "allowgradebookreadonly";
     String LTI_ALLOWROSTER = "allowroster";
     String LTI_SETTINGS = "settings";
     // This field is mis-named - so we make an alias :(
@@ -275,6 +277,7 @@ public interface LTIService extends LTISubstitutionsFilter {
     Long LTI13_LTI11 = 0L;
     Long LTI13_LTI13 = 1L;
     Long LTI13_BOTH = 2L;
+    String LTI_DEPLOYMENT_ID = "deployment_id";
     String LTI13_CLIENT_ID = "lti13_client_id";
 
     String LTI13_TOOL_KEYSET = "lti13_tool_keyset";
@@ -283,10 +286,21 @@ public interface LTIService extends LTISubstitutionsFilter {
 
     // Not persisted - generated dynamically
     String LTI13_LMS_ISSUER = "lti13_lms_issuer";
-    String LTI13_LMS_DEPLOYMENT_ID = "lti13_lms_deployment_id";
     String LTI13_LMS_KEYSET = "lti13_lms_keyset";
     String LTI13_LMS_TOKEN = "lti13_lms_token";
     String LTI13_LMS_ENDPOINT = "lti13_lms_endpoint";
+
+    /**
+     * Optional per-site deployment identifier for LTI 1.3 (lti_tool_site.deployment_group).
+     * Used in {@link org.sakaiproject.lti.util.SakaiLTIUtil#resolveLaunchDeploymentId} at precedence
+     * step 2 (after explicit site {@code lti13.deployment_id}, before mapped site properties).
+     */
+    String LTI_DEPLOYMENT_GROUP = "deployment_group";
+
+    /**
+     * @deprecated No longer read; use {@link org.sakaiproject.lti.util.SakaiLTIUtil#resolveLaunchDeploymentId} instead.
+     */
+    String LTI_JWT_DEPLOYMENT_ID_OVERRIDE_PROP = "lti_jwt_deployment_id_override";
 
     // Checksum for import and export
     String SAKAI_TOOL_CHECKSUM = "sakai_tool_checksum";
@@ -941,6 +955,83 @@ public interface LTIService extends LTISubstitutionsFilter {
         return toolSiteMaps.stream()
                 .map(org.sakaiproject.lti.beans.LtiToolSiteBean::of)
                 .collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
+     * Normalizes {@link #LTI_UPDATED_AT} values from JDBC/Foorm maps for duplicate-row resolution.
+     */
+    private static java.util.Date toolSiteRowUpdatedAt(Object updatedAt) {
+        if (updatedAt == null) {
+            return null;
+        }
+        if (updatedAt instanceof java.util.Date) {
+            return (java.util.Date) updatedAt;
+        }
+        if (updatedAt instanceof Number) {
+            return new java.util.Date(((Number) updatedAt).longValue());
+        }
+        return null;
+    }
+
+    /**
+     * @return true if {@code candidate} should replace {@code best} as the newer tool-site row
+     */
+    private static boolean isNewerToolSiteRow(java.util.Date candidateTs, java.util.Date bestTs) {
+        if (candidateTs != null) {
+            return bestTs == null || candidateTs.after(bestTs);
+        }
+        return false;
+    }
+
+    /**
+     * Returns the optional {@link #LTI_DEPLOYMENT_GROUP} for a tool deployed to the given site,
+     * or null when unset or when there is no matching tool-site row.
+     * <p>
+     * If more than one {@code lti_tool_site} row matches the tool and site (no composite unique
+     * is enforced at the schema level), the row with the greatest {@link #LTI_UPDATED_AT} wins;
+     * null timestamps are treated as older than any real timestamp, and ties among nulls keep
+     * the first matching row.
+     *
+     * @param toolKey primary key of the LTI tool
+     * @param launchSiteId site id where the launch occurs (must match the tool-site row {@link #LTI_SITE_ID})
+     */
+    default String getDeploymentGroupForLaunch(Long toolKey, String launchSiteId) {
+        if (toolKey == null || launchSiteId == null) {
+            return null;
+        }
+        String trimmedSite = launchSiteId.trim();
+        if (trimmedSite.isEmpty()) {
+            return null;
+        }
+        List<Map<String, Object>> rows = getToolSitesByToolId(String.valueOf(toolKey), trimmedSite);
+        if (rows == null) {
+            return null;
+        }
+        Map<String, Object> bestRow = null;
+        java.util.Date bestUpdated = null;
+        for (Map<String, Object> row : rows) {
+            Object siteObj = row.get(LTI_SITE_ID);
+            if (siteObj == null) {
+                continue;
+            }
+            if (!trimmedSite.equals(siteObj.toString().trim())) {
+                continue;
+            }
+            java.util.Date updated = toolSiteRowUpdatedAt(row.get(LTI_UPDATED_AT));
+            if (bestRow == null || isNewerToolSiteRow(updated, bestUpdated)) {
+                bestRow = row;
+                bestUpdated = updated;
+            }
+        }
+        if (bestRow == null) {
+            return null;
+        }
+        Object dg = bestRow.get(LTI_DEPLOYMENT_GROUP);
+        if (dg == null) {
+            return null;
+        }
+        String s = dg.toString().trim();
+        return s.isEmpty() ? null : s;
     }
 
     // ------------------------------------------------------------------------------------

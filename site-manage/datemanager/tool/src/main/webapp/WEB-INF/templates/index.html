@@ -14,7 +14,10 @@
         sakai.locale.userCountry = [[${userCountry}]];
         sakai.locale.userLanguage = [[${userLanguage}]];
         sakai.locale.userLocale = [[${userLocale}]];
+        sakai.locale.userTimeZone = [[${userTimeZone}]];
         includeLatestJQuery('datemanager/index.html');
+        includeWebjarLibrary('momentjs');
+        includeWebjarLibrary('moment-timezone/0.5.33/builds/moment-timezone-with-data.min.js');
       /*]]>*/
     </script>
     <script src="/library/js/lang-datepicker/lang-datepicker.js"></script>
@@ -32,7 +35,7 @@
         </div>
         <label>
           <span th:text="#{dateshifter.label.before}" th:remove="tag"></span>
-          <input id="dateShifterDays" type="text"></input>
+          <input id="dateShifterDays" type="text" />
           <span th:text="#{dateshifter.label.after}" th:remove="tag"></span>
         </label>
       </p>
@@ -40,6 +43,53 @@
       <button class="btn btn-link m-2" id="shiftVisibleDates" th:text="#{dateshifter.visible.button}" disabled></button>
       <a id="exportDates" class="btn-link" th:text="#{dateshifter.export.dates.csv}" th:href="@{/date-manager/export}">Export Dates</a>
       <a id="importDates" class="btn-link" th:text="#{dateshifter.import.dates.csv}" th:href="@{/date-manager/page/import}">Import Dates</a>
+    </div>
+
+    <div class="date-manager-setter mb-3">
+      <div class="sak-banner-error d-none" id="dateBulkSetterError">
+        <span data-error="empty" th:text="#{datesetter.error.empty}"></span>
+        <span data-error="dateonly" class="d-none" th:text="#{datesetter.error.dateonly}"></span>
+      </div>
+      <p th:text="#{datesetter.instructions}">Enter one or more dates below, then apply them to all items or expanded sections only. Remember to click Save Changes at the bottom of the page to save your adjustments.</p>
+      <div class="row g-3">
+        <div class="col-sm-6 col-lg-3">
+          <label class="form-label" for="bulk-open-date" th:text="#{column.open.date}">Open Date</label>
+          <input id="bulk-open-date" type="text" class="form-control bulk-date-input" />
+          <input id="bulk-hidden-open-date" type="hidden" data-field="open_date" />
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <label class="form-label" for="bulk-due-date" th:text="#{column.due.date}">Due Date</label>
+          <input id="bulk-due-date" type="text" class="form-control bulk-date-input" />
+          <input id="bulk-hidden-due-date" type="hidden" data-field="due_date" />
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <label class="form-label" for="bulk-accept-until" th:text="#{column.accept.until}">Accept Until Date</label>
+          <input id="bulk-accept-until" type="text" class="form-control bulk-date-input" />
+          <input id="bulk-hidden-accept-until" type="hidden" data-field="accept_until" />
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <label class="form-label" for="bulk-feedback-start" th:text="#{column.feedback.start.date}">Show Feedback On</label>
+          <input id="bulk-feedback-start" type="text" class="form-control bulk-date-input" />
+          <input id="bulk-hidden-feedback-start" type="hidden" data-field="feedback_start" />
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <label class="form-label" for="bulk-feedback-end" th:text="#{column.feedback.end.date}">Show Feedback Until</label>
+          <input id="bulk-feedback-end" type="text" class="form-control bulk-date-input" />
+          <input id="bulk-hidden-feedback-end" type="hidden" data-field="feedback_end" />
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <label class="form-label" for="bulk-signup-begins" th:text="#{column.signup.begins.date}">Sign-up Begin Date</label>
+          <input id="bulk-signup-begins" type="text" class="form-control bulk-date-input" />
+          <input id="bulk-hidden-signup-begins" type="hidden" data-field="signup_begins" />
+        </div>
+        <div class="col-sm-6 col-lg-3">
+          <label class="form-label" for="bulk-signup-deadline" th:text="#{column.signup.deadline.date}">Sign-up End Date</label>
+          <input id="bulk-signup-deadline" type="text" class="form-control bulk-date-input" />
+          <input id="bulk-hidden-signup-deadline" type="hidden" data-field="signup_deadline" />
+        </div>
+      </div>
+      <button class="btn btn-link m-2" id="applyAllDates" th:text="#{datesetter.all.button}" disabled></button>
+      <button class="btn btn-link m-2" id="applyVisibleDates" th:text="#{datesetter.visible.button}" disabled></button>
     </div>
 
     <form id="date-manager-form" method="POST">
@@ -69,7 +119,7 @@
             <a data-bs-toggle="collapse" data-parent="#accordion" href="#collapse-assignments" class="collapsed" aria-expanded="false"><span th:text="${assignmentsToolTitle}">Assignments</span><span class="allocatedSpinPlaceholder"></span></a>
           </h4>
         </div>
-        <div th:replace="tool_fragment :: tool_fragment(items=${assignments}, toolId='assignments', collapseId='collapse-assignments')"></div>
+        <div th:replace="~{tool_fragment :: tool_fragment(items=${assignments}, toolId='assignments', collapseId='collapse-assignments')}"></div>
       </div>
       <div th:if="${assessments != null}" class="card">
         <div class="card-header">
@@ -77,7 +127,7 @@
             <a data-bs-toggle="collapse" data-parent="#accordion" href="#collapse-assessments" class="collapsed" aria-expanded="false"><span th:text="${assessmentsToolTitle}">Tests & Quizzes</span><span class="allocatedSpinPlaceholder"></span></a>
           </h4>
         </div>
-        <div th:replace="tool_fragment :: tool_fragment(items=${assessments}, toolId='assessments', collapseId='collapse-assessments')"></div>
+        <div th:replace="~{tool_fragment :: tool_fragment(items=${assessments}, toolId='assessments', collapseId='collapse-assessments')}"></div>
       </div>
       <div th:if="${signupMeetings != null}" class="card">
         <div class="card-header">
@@ -85,7 +135,7 @@
             <a data-bs-toggle="collapse" data-parent="#accordion" href="#collapse-signup" class="collapsed" aria-expanded="false"><span th:text="${signupMeetingsToolTitle}">Sign up</span><span class="allocatedSpinPlaceholder"></span></a>
           </h4>
         </div>
-        <div th:replace="tool_fragment :: tool_fragment(items=${signupMeetings}, toolId='signupMeetings', collapseId='collapse-signup')"></div>
+        <div th:replace="~{tool_fragment :: tool_fragment(items=${signupMeetings}, toolId='signupMeetings', collapseId='collapse-signup')}"></div>
       </div>
       <div th:if="${gradebookItems != null}" class="card">
         <div class="card-header">
@@ -93,7 +143,7 @@
             <a data-bs-toggle="collapse" data-parent="#accordion" href="#collapse-gradebook" class="collapsed" aria-expanded="false"><span th:text="${gradebookItemsToolTitle}">Gradebook</span><span class="allocatedSpinPlaceholder"></span></a>
           </h4>
         </div>
-        <div th:replace="tool_fragment :: tool_fragment(items=${gradebookItems}, toolId='gradebookItems', collapseId='collapse-gradebook')"></div>
+        <div th:replace="~{tool_fragment :: tool_fragment(items=${gradebookItems}, toolId='gradebookItems', collapseId='collapse-gradebook')}"></div>
       </div>
       <div th:if="${resources != null}" class="card">
         <div class="card-header">
@@ -101,7 +151,7 @@
             <a data-bs-toggle="collapse" data-parent="#accordion" href="#collapse-resources" class="collapsed" aria-expanded="false"><span th:text="${resourcesToolTitle}">Resources</span><span class="allocatedSpinPlaceholder"></span></a>
           </h4>
         </div>
-        <div th:replace="tool_fragment :: tool_fragment(items=${resources}, toolId='resources', collapseId='collapse-resources')"></div>
+        <div th:replace="~{tool_fragment :: tool_fragment(items=${resources}, toolId='resources', collapseId='collapse-resources')}"></div>
       </div>
       <div th:if="${calendarEvents != null}" class="card">
         <div class="card-header">
@@ -109,7 +159,7 @@
             <a data-bs-toggle="collapse" data-parent="#accordion" href="#collapse-calendar" class="collapsed" aria-expanded="false"><span th:text="${calendarEventsToolTitle}">Calendar</span><span class="allocatedSpinPlaceholder"></span></a>
           </h4>
         </div>
-        <div th:replace="tool_fragment :: tool_fragment(items=${calendarEvents}, toolId='calendarEvents', collapseId='collapse-calendar')"></div>
+        <div th:replace="~{tool_fragment :: tool_fragment(items=${calendarEvents}, toolId='calendarEvents', collapseId='collapse-calendar')}"></div>
       </div>
       <div th:if="${forums != null}" class="card">
         <div class="card-header">
@@ -117,7 +167,7 @@
             <a data-bs-toggle="collapse" data-parent="#accordion" href="#collapse-forums" class="collapsed" aria-expanded="false"><span th:text="${forumsToolTitle}">Forums</span><span class="allocatedSpinPlaceholder"></span></a>
           </h4>
         </div>
-        <div th:replace="tool_fragment :: tool_fragment(items=${forums}, toolId='forums', collapseId='collapse-forums')"></div>
+        <div th:replace="~{tool_fragment :: tool_fragment(items=${forums}, toolId='forums', collapseId='collapse-forums')}"></div>
       </div>
       <div th:if="${announcements != null}" class="card">
         <div class="card-header">
@@ -125,7 +175,7 @@
             <a data-bs-toggle="collapse" data-parent="#accordion" href="#collapse-announcements" class="collapsed" aria-expanded="false"><span th:text="${announcementsToolTitle}">Announcements</span><span class="allocatedSpinPlaceholder"></span></a>
           </h4>
         </div>
-        <div th:replace="tool_fragment :: tool_fragment(items=${announcements}, toolId='announcements', collapseId='collapse-announcements')"></div>
+        <div th:replace="~{tool_fragment :: tool_fragment(items=${announcements}, toolId='announcements', collapseId='collapse-announcements')}"></div>
       </div>
       <div th:if="${lessons != null}" class="card">
         <div class="card-header">
@@ -133,7 +183,7 @@
             <a data-bs-toggle="collapse" data-parent="#accordion" href="#collapse-lessons" class="collapsed" aria-expanded="false"><span th:text="${lessonsToolTitle}">Lessons</span><span class="allocatedSpinPlaceholder"></span></a>
           </h4>
         </div>
-        <div th:replace="tool_fragment :: tool_fragment(items=${lessons}, toolId='lessons', collapseId='collapse-lessons')"></div>
+        <div th:replace="~{tool_fragment :: tool_fragment(items=${lessons}, toolId='lessons', collapseId='collapse-lessons')}"></div>
       </div>
 
       <div class="act">
@@ -270,6 +320,7 @@
 
           DTMN.initDatePicker(updates, notModified);
           DTMN.initShifter(updates, notModified);
+          DTMN.initBulkSetter(updates, notModified);
 
           function printErrors() {
             $('.errors').empty();
